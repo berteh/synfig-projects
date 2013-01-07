@@ -1,0 +1,108 @@
+From ece28e3215a02cfea4cde02f1d48541d69e71a52 Mon Sep 17 00:00:00 2001
+From: Bertrand Gregoire <berteh@gmail.com>
+Date: Mon, 26 Mar 2012 10:21:28 +0200
+Subject: [PATCH] labels fix, fixing
+ http://wiki.synfig.org/wiki/Dev:Wish_list#Linking_Zoom_layer_to_Paste_Canvas
+ http://sourceforge.net/tracker/?func=detail&aid=3405023&group_id=144022&atid=757416
+ http://www.synfig.org/forums/viewtopic.php?f=14&t=1227
+
+---
+ synfig-core/src/modules/lyr_std/zoom.cpp           |   11 ++++++-----
+ synfig-studio/src/gui/dialogs/dialog_preview.cpp   |    2 +-
+ synfig-studio/src/gui/render.cpp                   |    2 +-
+ .../src/synfigapp/actions/layerremove.cpp          |    4 ++--
+ 4 files changed, 10 insertions(+), 9 deletions(-)
+
+diff --git a/synfig-core/src/modules/lyr_std/zoom.cpp b/synfig-core/src/modules/lyr_std/zoom.cpp
+index c4efd73..430e5c6 100644
+--- a/synfig-core/src/modules/lyr_std/zoom.cpp
++++ b/synfig-core/src/modules/lyr_std/zoom.cpp
+@@ -1,6 +1,6 @@
+ /* === S Y N F I G ========================================================= */
+ /*!	\file zoom.cpp
+-**	\brief Implementation of the "Zoom" layer
++**	\brief Implementation of the "Zoom" layer, aka "Scale"
+ **
+ **	$Id$
+ **
+@@ -48,7 +48,7 @@
+ 
+ SYNFIG_LAYER_INIT(Zoom);
+ SYNFIG_LAYER_SET_NAME(Zoom,"zoom");
+-SYNFIG_LAYER_SET_LOCAL_NAME(Zoom,N_("Zoom"));
++SYNFIG_LAYER_SET_LOCAL_NAME(Zoom,N_("Scale"));
+ SYNFIG_LAYER_SET_CATEGORY(Zoom,N_("Transform"));
+ SYNFIG_LAYER_SET_VERSION(Zoom,"0.1");
+ SYNFIG_LAYER_SET_CVS_ID(Zoom,"$Id$");
+@@ -96,12 +96,12 @@ Zoom::get_param_vocab()const
+ 
+ 	ret.push_back(ParamDesc("amount")
+ 		.set_local_name(_("Amount"))
+-		.set_description(_("Amount to zoom in"))
++		.set_description(_("Amount to scale to"))
+ 	);
+ 
+ 	ret.push_back(ParamDesc("center")
+-		.set_local_name(_("Center"))
+-		.set_description(_("Point to zoom in to"))
++		.set_local_name(_("Origin"))
++		.set_description(_("Point to scale from"))
+ 	);
+ 
+ 	return ret;
+@@ -162,3 +162,4 @@ Zoom::get_full_bounding_rect(synfig::Context context)const
+ {
+ 	return (context.get_full_bounding_rect()-center)*exp(amount)+center;
+ }
++
+diff --git a/synfig-studio/src/gui/dialogs/dialog_preview.cpp b/synfig-studio/src/gui/dialogs/dialog_preview.cpp
+index ef48c86..c5a8305 100644
+--- a/synfig-studio/src/gui/dialogs/dialog_preview.cpp
++++ b/synfig-studio/src/gui/dialogs/dialog_preview.cpp
+@@ -146,7 +146,7 @@ settings(this,"prevoptions")
+ 	generalTable->set_col_spacings(12);
+ 	generalPadding->add(*generalTable);
+ 
+-	Gtk::Label *zoomLabel = manage(new Gtk::Label(_("_Zoom")));
++	Gtk::Label *zoomLabel = manage(new Gtk::Label(_("_Quality")));
+ 	zoomLabel->set_alignment(0, 0.5);
+ 	zoomLabel->set_use_underline(TRUE);
+ 	Gtk::SpinButton *zoomSpinner = manage(new Gtk::SpinButton(adj_zoom, 0.1, 2));
+diff --git a/synfig-studio/src/gui/render.cpp b/synfig-studio/src/gui/render.cpp
+index c5eae9c..9bf4d49 100644
+--- a/synfig-studio/src/gui/render.cpp
++++ b/synfig-studio/src/gui/render.cpp
+@@ -68,7 +68,7 @@ RenderSettings::RenderSettings(Gtk::Window& parent, etl::handle<synfigapp::Canva
+ 	entry_quality(adjustment_quality,1,0),
+ 	adjustment_antialias(1,1,31),
+ 	entry_antialias(adjustment_antialias,1,0),
+-	toggle_single_frame(_("Use _current frame"), true),
++	toggle_single_frame(_("Render _current frame only"), true),
+ 	tparam("mpeg4",200)
+ {
+ 	tparam.sequence_separator=App::sequence_separator;
+diff --git a/synfig-studio/src/synfigapp/actions/layerremove.cpp b/synfig-studio/src/synfigapp/actions/layerremove.cpp
+index d10e838..958c209 100644
+--- a/synfig-studio/src/synfigapp/actions/layerremove.cpp
++++ b/synfig-studio/src/synfigapp/actions/layerremove.cpp
+@@ -47,7 +47,7 @@ using namespace Action;
+ 
+ ACTION_INIT_NO_GET_LOCAL_NAME(Action::LayerRemove);
+ ACTION_SET_NAME(Action::LayerRemove,"LayerRemove");
+-ACTION_SET_LOCAL_NAME(Action::LayerRemove,N_("Remove Layer"));
++ACTION_SET_LOCAL_NAME(Action::LayerRemove,N_("Delete Layer"));
+ ACTION_SET_TASK(Action::LayerRemove,"remove");
+ ACTION_SET_CATEGORY(Action::LayerRemove,Action::CATEGORY_LAYER);
+ ACTION_SET_PRIORITY(Action::LayerRemove,0);
+@@ -67,7 +67,7 @@ Action::LayerRemove::LayerRemove()
+ synfig::String
+ Action::LayerRemove::get_local_name()const
+ {
+-	return get_layer_descriptions(layer_list, _("Remove Layer"), _("Remove Layers"));
++	return get_layer_descriptions(layer_list, _("Delete Layer"), _("Delete Layers"));
+ }
+ 
+ Action::ParamVocab
+-- 
+1.7.4.1
+

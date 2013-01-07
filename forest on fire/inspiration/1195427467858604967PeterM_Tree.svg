@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://web.resource.org/cc/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sodipodi="http://inkscape.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" id="svg2" sodipodi:version="0.32" inkscape:version="0.43" width="210mm" height="297mm" sodipodi:docbase="/home/peterm/afbeeldingen/svg" sodipodi:docname="tree.svg">
+  <metadata id="metadata7">
+    <rdf:RDF>
+      <cc:Work rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs id="defs5">
+    <linearGradient id="linearGradient2780">
+      <stop style="stop-color: rgb(75, 130, 71); stop-opacity: 1;" offset="0" id="stop2782"/>
+      <stop style="stop-color: rgb(15, 23, 15); stop-opacity: 0;" offset="1" id="stop2784"/>
+    </linearGradient>
+    <linearGradient inkscape:collect="always" id="linearGradient2044">
+      <stop style="stop-color: rgb(63, 11, 11); stop-opacity: 1;" offset="0" id="stop2046"/>
+      <stop style="stop-color: rgb(63, 11, 11); stop-opacity: 0;" offset="1" id="stop2048"/>
+    </linearGradient>
+    <linearGradient inkscape:collect="always" xlink:href="#linearGradient2044" id="linearGradient2050" x1="-552.68896" y1="477.90662" x2="-552.68896" y2="615.74750" gradientUnits="userSpaceOnUse" gradientTransform="matrix(0.745827, 0, 0, 1, 791.595, 155.606)"/>
+    <linearGradient inkscape:collect="always" xlink:href="#linearGradient2780" id="linearGradient2786" x1="632.57800" y1="595.82269" x2="303.45538" y2="373.35645" gradientUnits="userSpaceOnUse"/>
+  </defs>
+  <sodipodi:namedview inkscape:window-height="721" inkscape:window-width="1270" inkscape:pageshadow="2" inkscape:pageopacity="0.0" borderopacity="1.0" bordercolor="#666666" pagecolor="#ffffff" id="base" inkscape:zoom="0.51693230" inkscape:cx="372.04724" inkscape:cy="526.18109" inkscape:window-x="0" inkscape:window-y="0" inkscape:current-layer="svg2"/>
+  <path style="fill: rgb(91, 13, 13); fill-opacity: 1; fill-rule: nonzero; stroke: rgb(35, 12, 12); stroke-width: 18.8033; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dashoffset: 0pt; stroke-opacity: 1;" d="M 294.56699,581.10358 L 463.88911,581.10358 C 463.88911,581.10358 380.34831,812.72009 495.69855,881.97324 C 359.22408,839.89335 511.60327,953.54447 387.18041,895.22717 C 389.66709,879.32245 363.44641,853.80998 257.45598,892.57638 C 384.66750,775.35596 294.56699,581.10358 294.56699,581.10358 z " id="rect1305" sodipodi:nodetypes="cccccc" inkscape:export-filename="/home/peterm/afbeeldingen/svg/tree.png" inkscape:export-xdpi="39.060001" inkscape:export-ydpi="39.060001"/>
+  <path style="opacity: 1; fill: rgb(20, 146, 13); fill-opacity: 1; fill-rule: nonzero; stroke: rgb(22, 88, 34); stroke-width: 18.8033; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0pt; stroke-opacity: 1;" d="M 415.50801,154.17213 C 342.22730,154.17213 277.51187,180.64052 238.05197,221.07103 C 122.81079,225.10840 30.910599,294.27159 30.910608,379.13608 C 30.910608,428.60842 62.153657,472.77970 111.01249,501.84110 C 116.76619,586.23289 231.99064,653.66111 373.19003,653.66112 C 518.06205,653.66112 635.62424,582.68266 635.62422,495.22536 C 635.62422,494.79387 635.54438,494.37279 635.53867,493.94213 C 677.08928,475.12754 703.35008,448.04730 703.35009,417.83251 C 703.35009,386.28744 674.84110,358.07621 630.06357,339.21347 C 632.10028,330.56297 633.20034,321.68860 633.20034,312.60789 C 633.20034,225.15059 535.67836,154.17213 415.50801,154.17213 z " id="path2035" inkscape:export-filename="/home/peterm/afbeeldingen/svg/tree.png" inkscape:export-xdpi="39.060001" inkscape:export-ydpi="39.060001"/>
+</svg>

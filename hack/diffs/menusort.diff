@@ -1,0 +1,94 @@
+From 15ee146d7365cf253697c7f2289a0cd894dde4b9 Mon Sep 17 00:00:00 2001
+From: Bertrand Gregoire <berteh@gmail.com>
+Date: Tue, 27 Mar 2012 08:55:58 +0200
+Subject: [PATCH] sort layers menu entry alphabetically based on localized name.
+
+---
+ synfig-studio/src/gui/docks/dock_layers.cpp |   37 +++++++++++++++++++++------
+ 1 files changed, 29 insertions(+), 8 deletions(-)
+
+diff --git a/synfig-studio/src/gui/docks/dock_layers.cpp b/synfig-studio/src/gui/docks/dock_layers.cpp
+index a626680..60db7fc 100644
+--- a/synfig-studio/src/gui/docks/dock_layers.cpp
++++ b/synfig-studio/src/gui/docks/dock_layers.cpp
+@@ -70,6 +70,15 @@ using namespace studio;
+ 
+ /* === M E T H O D S ======================================================= */
+ 
++//sort localized string, should be moved to ETL? or some studio resource?, inspired from http://www.cplusplus.com/reference/stl/map/map/
++bool compate_localized(synfig::String& lhs, synfig::String& rhs)
++  {return dgettext("synfig", lhs.c_str())<dgettext("synfig", rhs.c_str());}
++
++struct localizedcomp {
++  bool operator() (const synfig::String& lhs, const synfig::String& rhs) const
++  {return dgettext("synfig", lhs.c_str())<dgettext("synfig", rhs.c_str());} //we may want to have this changed to case insensitive
++};
++
+ Dock_Layers::Dock_Layers():
+ 	Dock_CanvasSpecific("layers",_("Layers"),Gtk::StockID("synfig-layer")),
+ 	layer_action_manager(new LayerActionManager)
+@@ -79,9 +88,10 @@ Dock_Layers::Dock_Layers():
+ 	action_group_new_layers=Gtk::ActionGroup::create("action_group_new_layers");
+ 	action_group_layer_ops=Gtk::ActionGroup::create("action_group_layer_ops");
+ 
+-	std::map<synfig::String,synfig::String> category_map;
++	//2 level sort: on categories and layers localized names.
++    std::map<synfig::String,std::map<synfig::String, synfig::String, localizedcomp>, localizedcomp> category_map;
+ 
+-	// Build layer creation actions
++	// Build layer categories creation actions
+ 	synfig::Layer::Book::iterator iter;
+ 	for(iter=synfig::Layer::book().begin();iter!=synfig::Layer::book().end();++iter)
+ 	{
+@@ -90,7 +100,7 @@ Dock_Layers::Dock_Layers():
+ 		if(lyr.second.category==CATEGORY_DO_NOT_USE)
+ 			continue;
+ 
+-		action_group_new_layers->add(Gtk::Action::create(
++		action_group_new_layers->add(Gtk::Action::create( //create leaf menu entry with icon
+ 			strprintf("layer-new-%s",lyr.first.c_str()),
+ 			layer_icon(lyr.first.c_str()),
+ 			lyr.second.local_name,lyr.second.local_name
+@@ -103,7 +113,7 @@ Dock_Layers::Dock_Layers():
+ 			)
+ 		);
+ 
+-		category_map[lyr.second.category]+=strprintf("<menuitem action='layer-new-%s' />",lyr.first.c_str());
++		category_map[lyr.second.category][lyr.second.local_name]=strprintf("<menuitem action='layer-new-%s' />",lyr.first.c_str());
+ 
+ 		//(*category_map)[lyr.second.category]->items().push_back(Gtk::Menu_Helpers::MenuElem(lyr.second.local_name,
+ 		//));
+@@ -115,11 +125,21 @@ Dock_Layers::Dock_Layers():
+ 
+ 		layer_ui_info+="<ui><popup action='menu-main'><menu action='menu-layer'><menu action='menu-layer-new'>";
+ 
+-		std::map<synfig::String,synfig::String>::iterator iter;
+-		for(iter=category_map.begin();iter!=category_map.end();++iter)
++		std::map<synfig::String,std::map<synfig::String, synfig::String, localizedcomp>, localizedcomp>::iterator iter1;
++		std::map<synfig::String, synfig::String, localizedcomp>::iterator iter2;
++
++		for(iter1=category_map.begin();iter1!=category_map.end();++iter1)
+ 		{
+-			layer_ui_info+=strprintf("<menu action='%s'>%s</menu>",iter->first.c_str(),iter->second.c_str());
+-			action_group_categories->add(Gtk::Action::create(iter->first.c_str(),dgettext("synfig", iter->first.c_str())));
++			//category entry
++			layer_ui_info+=strprintf("<menu action='%s'>",iter1->first.c_str());
++			action_group_categories->add(Gtk::Action::create(iter1->first.c_str(),dgettext("synfig", iter1->first.c_str())));
++			for (iter2=iter1->second.begin(); iter2!=iter1->second.end(); ++iter2)
++			{
++				//layer entry
++				layer_ui_info+=iter2->second.c_str();
++			}
++			layer_ui_info+="</menu>";
++
+ 		}
+ 
+ 		layer_ui_info+="</menu></menu></popup></ui>";
+@@ -293,3 +313,4 @@ Dock_Layers::add_layer(synfig::String id)
+ 		canvas_view->add_layer(id);
+ 	}
+ }
++
+-- 
+1.7.4.1
+

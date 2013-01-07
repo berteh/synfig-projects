@@ -1,0 +1,486 @@
+From 53a657a01cd22d3b35db7b8ed4509ec3d98fb73a Mon Sep 17 00:00:00 2001
+From: Bertrand Gregoire <berteh@gmail.com>
+Date: Wed, 4 Apr 2012 00:06:30 +0200
+Subject: [PATCH 1/2] added font family selection dialog on new font_family value (of String type).
+ remaining possible improvement to be done: link size, weight and style widgets to related parameters, they are deactivated for now.
+
+---
+ .../src/gui/cellrenderer/cellrenderer_value.cpp    |    2 +
+ .../src/gui/cellrenderer/cellrenderer_value.h      |    1 +
+ synfig-studio/src/gui/widgets/Makefile_insert      |    2 +
+ synfig-studio/src/gui/widgets/widget_value.cpp     |   53 ++++++++++++++-----
+ synfig-studio/src/gui/widgets/widget_value.h       |    2 +
+ 5 files changed, 46 insertions(+), 14 deletions(-)
+
+diff --git a/synfig-studio/src/gui/cellrenderer/cellrenderer_value.cpp b/synfig-studio/src/gui/cellrenderer/cellrenderer_value.cpp
+index e8a83cd..f548923 100644
+--- a/synfig-studio/src/gui/cellrenderer/cellrenderer_value.cpp
++++ b/synfig-studio/src/gui/cellrenderer/cellrenderer_value.cpp
+@@ -43,6 +43,7 @@
+ #include "widgets/widget_value.h"
+ #include "widgets/widget_vector.h"
+ #include "widgets/widget_filename.h"
++#include "widgets/widget_fontfamily.h"
+ #include "widgets/widget_enum.h"
+ #include "widgets/widget_color.h"
+ #include "widgets/widget_canvaschooser.h"
+@@ -584,6 +585,7 @@ CellRenderer_ValueBase::start_editing_vfunc(
+ 		}
+ 		// if(get_param_desc().get_hint()!="filename")
+ 			// return CellRendererText::start_editing_vfunc(event,widget,path,background_area,cell_area,flags);
++		//todo check if need do smthg for fontfamily here?
+ 	default:
+ 		{
+ 			assert(get_canvas());
+diff --git a/synfig-studio/src/gui/cellrenderer/cellrenderer_value.h b/synfig-studio/src/gui/cellrenderer/cellrenderer_value.h
+index 2d1e21f..7e49679 100644
+--- a/synfig-studio/src/gui/cellrenderer/cellrenderer_value.h
++++ b/synfig-studio/src/gui/cellrenderer/cellrenderer_value.h
+@@ -68,6 +68,7 @@ class Widget_Color;
+ class Widget_CanvasChooser;
+ class Widget_Enum;
+ class Widget_Filename;
++class Widget_Fontfamily;
+ class Widget_Vector;
+ class Widget_Time;
+ 
+diff --git a/synfig-studio/src/gui/widgets/Makefile_insert b/synfig-studio/src/gui/widgets/Makefile_insert
+index 5c2aaba..ad364bf 100644
+--- a/synfig-studio/src/gui/widgets/Makefile_insert
++++ b/synfig-studio/src/gui/widgets/Makefile_insert
+@@ -8,6 +8,7 @@ WIDGETS_HH = \
+ 	widgets/widget_distance.h \
+ 	widgets/widget_enum.h \
+ 	widgets/widget_filename.h \
++	widgets/widget_fontfamily.h \
+ 	widgets/widget_gradient.h \
+ 	widgets/widget_sound.h \
+ 	widgets/widget_time.h \
+@@ -28,6 +29,7 @@ WIDGETS_CC = \
+ 	widgets/widget_distance.cpp \
+ 	widgets/widget_enum.cpp \
+ 	widgets/widget_filename.cpp \
++	widgets/widget_fontfamily.cpp \
+ 	widgets/widget_gradient.cpp \
+ 	widgets/widget_sound.cpp \
+ 	widgets/widget_time.cpp \
+diff --git a/synfig-studio/src/gui/widgets/widget_value.cpp b/synfig-studio/src/gui/widgets/widget_value.cpp
+index 1d61812..8a2e274 100644
+--- a/synfig-studio/src/gui/widgets/widget_value.cpp
++++ b/synfig-studio/src/gui/widgets/widget_value.cpp
+@@ -42,6 +42,7 @@
+ 
+ #include "widgets/widget_vector.h"
+ #include "widgets/widget_filename.h"
++#include "widgets/widget_fontfamily.h"
+ #include "widgets/widget_enum.h"
+ #include "widgets/widget_coloredit.h"
+ #include "widgets/widget_canvaschooser.h"
+@@ -114,6 +115,9 @@ Widget_ValueBase::Widget_ValueBase():
+ 	filename_widget=manage(new class Widget_Filename());
+ 	pack_start(*filename_widget);
+ 
++	fontfamily_widget=manage(new class Widget_Fontfamily());
++	pack_start(*fontfamily_widget);
++
+ 	time_widget=manage(new class Widget_Time());
+ 	pack_start(*time_widget);
+ 
+@@ -130,6 +134,7 @@ Widget_ValueBase::Widget_ValueBase():
+ 	string_widget->signal_activate().connect(sigc::mem_fun(*this,&Widget_ValueBase::activate));
+ 	canvas_widget->signal_activate().connect(sigc::mem_fun(*this,&Widget_ValueBase::activate));
+ 	filename_widget->signal_activate().connect(sigc::mem_fun(*this,&Widget_ValueBase::activate));
++	fontfamily_widget->signal_activate().connect(sigc::mem_fun(*this,&Widget_ValueBase::activate));
+ 	time_widget->signal_activate().connect(sigc::mem_fun(*this,&Widget_ValueBase::activate));
+ 	distance_widget->signal_activate().connect(sigc::mem_fun(*this,&Widget_ValueBase::activate));
+ 
+@@ -172,6 +177,7 @@ Widget_ValueBase::inside_cellrenderer()
+ 	color_widget->set_has_frame(false);
+     //color_widget->set_digits(10);
+ 	filename_widget->set_has_frame(false);
++	fontfamily_widget->set_has_frame(false); //todo check if additional init is needed
+ 	time_widget->set_has_frame(false);
+ }
+ 
+@@ -190,6 +196,7 @@ Widget_ValueBase::set_sensitive(bool x)
+ 	enum_widget->set_sensitive(x);
+ 	angle_widget->set_sensitive(x);
+ 	filename_widget->set_sensitive(x);
++	fontfamily_widget->set_sensitive(x);
+ 	time_widget->set_sensitive(x);
+ 	distance_widget->set_sensitive(x);
+ }
+@@ -208,6 +215,7 @@ Widget_ValueBase::set_value(const synfig::ValueBase &data)
+ 	enum_widget->hide();
+ 	angle_widget->hide();
+ 	filename_widget->hide();
++	fontfamily_widget->hide();
+ 	time_widget->hide();
+ 	distance_widget->hide();
+ 
+@@ -274,15 +282,20 @@ Widget_ValueBase::set_value(const synfig::ValueBase &data)
+ 		bool_widget->show();
+ 		break;
+ 	case ValueBase::TYPE_STRING:
+-		if(child_param_desc.get_hint()!="filename" && param_desc.get_hint()!="filename")
++		if(child_param_desc.get_hint()=="filename" || param_desc.get_hint()=="filename")
+ 		{
+-			string_widget->set_text(value.get(string()));
+-			string_widget->show();
++			filename_widget->set_value(value.get(string()));
++			filename_widget->show();
++		}
++		else if(child_param_desc.get_hint()=="font_family" || param_desc.get_hint()=="font_family") //todo check else-if syntax works in C++
++		{
++			fontfamily_widget->set_value(value.get(string()));
++			fontfamily_widget->show();
+ 		}
+ 		else
+ 		{
+-			filename_widget->set_value(value.get(string()));
+-			filename_widget->show();
++			string_widget->set_text(value.get(string()));
++			string_widget->show();
+ 		}
+ 		break;
+ 	case ValueBase::TYPE_COLOR:
+@@ -345,13 +358,17 @@ Widget_ValueBase::get_value()
+ 		value=bool_widget->get_active();
+ 		break;
+ 	case ValueBase::TYPE_STRING:
+-		if(param_desc.get_hint()!="filename")
++		if(param_desc.get_hint()=="filename" || child_param_desc.get_hint()=="filename")
+ 		{
+-			value=string(string_widget->get_text());
++			value=string(filename_widget->get_value());
++		}
++		else if(param_desc.get_hint()=="font_family" || child_param_desc.get_hint()=="font_family")
++		{
++			value=string(fontfamily_widget->get_value());
+ 		}
+ 		else
+ 		{
+-			value=string(filename_widget->get_value());
++			value=string(string_widget->get_text());
+ 		}
+ 		break;
+ 	case ValueBase::TYPE_COLOR:
+@@ -416,13 +433,17 @@ Widget_ValueBase::on_grab_focus()
+ 		bool_widget->grab_focus();
+ 		break;
+ 	case ValueBase::TYPE_STRING:
+-		if(param_desc.get_hint()!="filename")
++		if(param_desc.get_hint()=="filename" || child_param_desc.get_hint()=="filename")
+ 		{
+-			string_widget->grab_focus();
++			filename_widget->grab_focus();
++		}
++		else if(param_desc.get_hint()=="font_family" || child_param_desc.get_hint()=="font_family")
++		{
++			fontfamily_widget->grab_focus();
+ 		}
+ 		else
+ 		{
+-			filename_widget->grab_focus();
++			string_widget->grab_focus();
+ 		}
+ 		break;
+ 	case ValueBase::TYPE_COLOR:
+@@ -471,13 +492,17 @@ Widget_ValueBase::signal_activate()
+ 		return string_widget->signal_activate();
+ 		break;
+ 	case ValueBase::TYPE_STRING:
+-		if(param_desc.get_hint()!="filename")
++		if(param_desc.get_hint()=="filename")
+ 		{
+-			return string_widget->signal_activate();
++			return filename_widget->signal_activate();
++		}
++		else if(param_desc.get_hint()=="font_family")
++		{
++			return fontfamily_widget->signal_activate();
+ 		}
+ 		else
+ 		{
+-			return filename_widget->signal_activate();
++			return string_widget->signal_activate();
+ 		}
+ 		break;
+ 	case ValueBase::TYPE_COLOR:
+diff --git a/synfig-studio/src/gui/widgets/widget_value.h b/synfig-studio/src/gui/widgets/widget_value.h
+index 6b15397..6daa75b 100644
+--- a/synfig-studio/src/gui/widgets/widget_value.h
++++ b/synfig-studio/src/gui/widgets/widget_value.h
+@@ -69,6 +69,7 @@ class Widget_ColorEdit;
+ class Widget_CanvasChooser;
+ class Widget_Enum;
+ class Widget_Filename;
++class Widget_Fontfamily;
+ class Widget_Vector;
+ class Widget_Time;
+ class Widget_Distance;
+@@ -92,6 +93,7 @@ class Widget_ValueBase : public Gtk::HBox
+ 	Widget_CanvasChooser *canvas_widget;
+ 	Widget_Enum *enum_widget;
+ 	Widget_Filename *filename_widget;
++	Widget_Fontfamily *fontfamily_widget;
+ 	Widget_Time *time_widget;
+ 	Gtk::Entry *string_widget;
+ 	Widget_Distance *distance_widget;
+-- 
+1.7.4.1
+
+
+From dd054101ae5ca657455bb6cac7c6e1d7849857c9 Mon Sep 17 00:00:00 2001
+From: Bertrand Gregoire <berteh@gmail.com>
+Date: Wed, 4 Apr 2012 00:10:07 +0200
+Subject: [PATCH 2/2] font_family widget files
+
+---
+ .../src/gui/widgets/widget_fontfamily.cpp          |  153 ++++++++++++++++++++
+ synfig-studio/src/gui/widgets/widget_fontfamily.h  |   73 ++++++++++
+ 2 files changed, 226 insertions(+), 0 deletions(-)
+ create mode 100644 synfig-studio/src/gui/widgets/widget_fontfamily.cpp
+ create mode 100644 synfig-studio/src/gui/widgets/widget_fontfamily.h
+
+diff --git a/synfig-studio/src/gui/widgets/widget_fontfamily.cpp b/synfig-studio/src/gui/widgets/widget_fontfamily.cpp
+new file mode 100644
+index 0000000..0887e75
+--- /dev/null
++++ b/synfig-studio/src/gui/widgets/widget_fontfamily.cpp
+@@ -0,0 +1,153 @@
++/* === S Y N F I G ========================================================= */
++/*!	\file widget_fontfamily.cpp
++**	\brief Template File
++**
++**	$Id$
++**
++**	\legal
++**	Copyright (c) 2002-2005 Robert B. Quattlebaum Jr., Adrian Bentley
++**	Copyright (c) 2008 Chris Moore
++**
++**	This package is free software; you can redistribute it and/or
++**	modify it under the terms of the GNU General Public License as
++**	published by the Free Software Foundation; either version 2 of
++**	the License, or (at your option) any later version.
++**
++**	This package is distributed in the hope that it will be useful,
++**	but WITHOUT ANY WARRANTY; without even the implied warranty of
++**	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
++**	General Public License for more details.
++**	\endlegal
++*/
++/* ========================================================================= */
++
++/* === H E A D E R S ======================================================= */
++
++#ifdef USING_PCH
++#	include "pch.h"
++#else
++#ifdef HAVE_CONFIG_H
++#	include <config.h>
++#endif
++
++#include <gtkmm/entry.h>
++#include <gtkmm/button.h>
++#include "widgets/widget_fontfamily.h"
++#include "app.h"
++#include "canvasview.h"
++
++#include "general.h"
++
++#endif
++
++/* === U S I N G =========================================================== */
++
++using namespace std;
++//using namespace etl;
++//using namespace synfig;
++using namespace studio;
++
++/* === M A C R O S ========================================================= */
++
++/* === G L O B A L S ======================================================= */
++
++/* === P R O C E D U R E S ================================================= */
++
++/* === M E T H O D S ======================================================= */
++
++Widget_Fontfamily::Widget_Fontfamily()
++{
++	entry_fontfamily=manage(new Gtk::Entry());
++	label_find= manage(new Gtk::Label(" . . . "));
++	button_choose=manage(new Gtk::Button());
++	Pango::AttrList attr_list;
++	{
++		Pango::AttrInt pango_size(Pango::Attribute::create_attr_size(Pango::SCALE*7));
++		pango_size.set_start_index(0);
++		pango_size.set_end_index(64);
++		attr_list.change(pango_size);
++	}
++	label_find->set_attributes(attr_list);
++	label_find->set_ellipsize(Pango::ELLIPSIZE_END);
++	button_choose->add(*label_find);
++
++	pack_start(*entry_fontfamily);
++	pack_start(*button_choose, false, false);
++	entry_fontfamily->show();
++	button_choose->show();
++	label_find->show();
++
++	button_choose->signal_clicked().connect(sigc::mem_fun(*this, &studio::Widget_Fontfamily::on_button_choose_pressed));
++	//entry_fontfamily->signal_value_changed().connect(sigc::mem_fun(*this, &studio::Widget_Fontfamily::on_value_changed));
++	entry_fontfamily->signal_activate().connect(sigc::mem_fun(*this, &studio::Widget_Fontfamily::on_value_changed));
++}
++
++Widget_Fontfamily::~Widget_Fontfamily()
++{
++}
++
++void
++Widget_Fontfamily::set_has_frame(bool x)
++{
++	entry_fontfamily->set_has_frame(x);
++}
++
++
++void
++Widget_Fontfamily::set_value(const std::string &data)
++{
++	entry_fontfamily->set_text(data);
++}
++
++string
++Widget_Fontfamily::get_value() const
++{
++	try
++	{
++		return entry_fontfamily->get_text();
++	}
++	catch(...)
++	{
++		throw string("Caught unknown exception");
++	}
++}
++
++void
++Widget_Fontfamily::on_value_changed()
++{
++	signal_value_changed()();
++}
++
++void
++Widget_Fontfamily::on_button_choose_pressed()
++{
++	string fontfamily=entry_fontfamily->get_text();
++	if(fontfamily.empty())
++		fontfamily="sans"; //default font alias that exists on all systems in Pango, failsafe case.
++//	else
++//		todo add here a test to test if current name is valid and raise warning otherwise (eg: "font not available on this system, please install %s\nShall Synfig use the default font "sans" instead?", fontfamily)
++
++
++	GtkWidget *fsd = gtk_font_selection_dialog_new("Select Font");
++	gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(fsd),(fontfamily+" 12").c_str());
++	//deactivate size, weight & style widgets... I'd rather link them to the appropriate parameter but cannot get access to these values (yet)
++	GtkWidget *fsw = gtk_font_selection_dialog_get_font_selection(GTK_FONT_SELECTION_DIALOG(fsd));
++	gtk_widget_set_sensitive(gtk_font_selection_get_size_entry(GTK_FONT_SELECTION(fsw)), false);
++	gtk_widget_set_sensitive(gtk_font_selection_get_size_list(GTK_FONT_SELECTION(fsw)), false);
++	gtk_widget_set_sensitive(gtk_font_selection_get_face_list(GTK_FONT_SELECTION(fsw)), false);
++
++	int result = gtk_dialog_run(GTK_DIALOG(fsd));
++
++	if (result == GTK_RESPONSE_OK || result == GTK_RESPONSE_APPLY)
++	{
++		PangoFontDescription *fontdesc;
++		gchar *fontname = gtk_font_selection_dialog_get_font_name(GTK_FONT_SELECTION_DIALOG(fsd));
++		fontdesc = pango_font_description_from_string(fontname);
++		fontfamily = pango_font_description_get_family(fontdesc);
++		g_free(fontname);
++	}
++	gtk_widget_destroy(fsd);
++	entry_fontfamily->set_text(fontfamily);
++	//if(App::dialog_open_file(_("Choose File"), fontfamily, MISC_DIR_PREFERENCE))
++	//	entry_fontfamily->set_text(fontfamily);
++}
+diff --git a/synfig-studio/src/gui/widgets/widget_fontfamily.h b/synfig-studio/src/gui/widgets/widget_fontfamily.h
+new file mode 100644
+index 0000000..747b460
+--- /dev/null
++++ b/synfig-studio/src/gui/widgets/widget_fontfamily.h
+@@ -0,0 +1,73 @@
++/* === S Y N F I G ========================================================= */
++/*!	\file widgets/widget_filename.h
++**	\brief Template Header
++**
++**	$Id$
++**
++**	\legal
++**	Copyright (c) 2002-2005 Robert B. Quattlebaum Jr., Adrian Bentley
++**
++**	This package is free software; you can redistribute it and/or
++**	modify it under the terms of the GNU General Public License as
++**	published by the Free Software Foundation; either version 2 of
++**	the License, or (at your option) any later version.
++**
++**	This package is distributed in the hope that it will be useful,
++**	but WITHOUT ANY WARRANTY; without even the implied warranty of
++**	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
++**	General Public License for more details.
++**	\endlegal
++*/
++/* ========================================================================= */
++
++/* === S T A R T =========================================================== */
++
++#ifndef __SYNFIG_STUDIO_WIDGET_FONTFAMILY_H
++#define __SYNFIG_STUDIO_WIDGET_FONTFAMILY_H
++
++/* === H E A D E R S ======================================================= */
++
++#include <sigc++/signal.h>
++#include <sigc++/slot.h>
++#include <gtkmm/box.h>
++#include <gtkmm/entry.h>
++#include <gtkmm/button.h>
++
++/* === M A C R O S ========================================================= */
++
++/* === T Y P E D E F S ===================================================== */
++
++/* === C L A S S E S & S T R U C T S ======================================= */
++
++namespace Gtk { class Entry; class Button; };
++
++namespace studio {
++
++class Widget_Fontfamily : public Gtk::HBox
++{
++	Gtk::Entry *entry_fontfamily;
++	Gtk::Button *button_choose;
++	Gtk::Label *label_find;
++
++	void on_button_choose_pressed();
++
++	sigc::signal<void> signal_value_changed_;
++
++public:
++	sigc::signal<void> &signal_value_changed() { return signal_value_changed_; }
++	Glib::SignalProxy0<void> signal_activate() { return entry_fontfamily->signal_activate(); }
++
++	void on_value_changed();
++
++	void set_value(const  std::string &data);
++	std::string get_value() const;
++	void set_has_frame(bool x);
++	Widget_Fontfamily();
++	~Widget_Fontfamily();
++}; // END of class Widget_Fontfamily
++
++}; // END of namespace studio
++
++/* === E N D =============================================================== */
++
++#endif
+-- 
+1.7.4.1
+
