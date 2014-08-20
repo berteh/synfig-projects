@@ -1,0 +1,41 @@
+<?xml version="1.0" standalone="no" ?>
+<!DOCTYPE project PUBLIC "-//audacityproject-1.3.0//DTD//EN" "http://audacity.sourceforge.net/xml/audacityproject-1.3.0.dtd" >
+<project xmlns="http://audacity.sourceforge.net/xml/" projname="music_sync_tutorial_data" version="1.3.0" audacityversion="2.0.5" sel0="3.2554685356" sel1="3.2554685356" vpos="0" h="0.0000000000" zoom="199.6640400268" rate="44100.0">
+	<tags/>
+	<wavetrack name="149732__beskhu__balle-ping-pong-2" channel="0" linked="1" mute="0" solo="0" height="150" minimized="0" isSelected="1" rate="44100" gain="1.0" pan="0.0">
+		<waveclip offset="0.51086168">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="105135">
+				<waveblock start="0">
+					<simpleblockfile filename="e000019c.au" len="90999" min="-0.68988" max="0.458557" rms="0.010559"/>
+				</waveblock>
+				<waveblock start="90999">
+					<simpleblockfile filename="e0000300.au" len="14136" min="-0.001251" max="0.001038" rms="0.000034"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="0"/>
+		</waveclip>
+	</wavetrack>
+	<wavetrack name="149732__beskhu__balle-ping-pong-2" channel="1" linked="0" mute="0" solo="0" height="150" minimized="0" isSelected="1" rate="44100" gain="1.0" pan="0.0">
+		<waveclip offset="0.51086168">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="105135">
+				<waveblock start="0">
+					<simpleblockfile filename="e0000360.au" len="90999" min="-0.498718" max="0.445526" rms="0.006976"/>
+				</waveblock>
+				<waveblock start="90999">
+					<simpleblockfile filename="e0000bc1.au" len="14136" min="-0.00177" max="0.002045" rms="0.00006"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="0"/>
+		</waveclip>
+	</wavetrack>
+	<labeltrack name="Label Track" numlabels="8" height="108" minimized="0" isSelected="0">
+		<label t="0.51086168" t1="1.06679554" title="high ping"/>
+		<label t="0.80134610" t1="0.80134610" title="top1"/>
+		<label t="1.06679554" t1="1.53257796" title="low ping"/>
+		<label t="1.30719583" t1="1.30719583" title="top2"/>
+		<label t="1.53257796" t1="1.71288083" title="wood ping"/>
+		<label t="1.63775109" t1="1.63775109" title="top3"/>
+		<label t="1.71288083" t1="2.58935313" title="Ttroll"/>
+		<label t="2.78968965" t1="2.78968965" title="roll bong"/>
+	</labeltrack>
+</project>
